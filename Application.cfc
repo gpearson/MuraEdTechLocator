@@ -2,7 +2,7 @@
 
 This file is part of MuraFW1
 
-Copyright 2010-2014 Stephen J. Withington, Jr.
+Copyright 2010-2013 Stephen J. Withington, Jr.
 Licensed under the Apache License, Version v2.0
 http://www.apache.org/licenses/LICENSE-2.0
 
@@ -29,18 +29,8 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 		var fwa = variables.framework.action;
 		var local = {};
 
-		clearFW1Request();
-
 		local.targetPath = getPageContext().getRequest().getRequestURI();
-
-		setupFrameworkDefaults();
-		setupRequestDefaults();
-
-		if ( !isFrameworkInitialized() || isFrameworkReloadRequest() ) {
-			setupApplicationWrapper();
-		}
-
-		restoreFlashContext();
+		onApplicationStart();
 
 		request.context[fwa] = StructKeyExists(form, fwa) 
 			? form[fwa] : StructKeyExists(url, fwa) 
@@ -57,8 +47,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 			& '_' & getItem(arguments.action)
 		);
 
-		local.response = variables.framework.siloSubsystems 
-			? getCachedView(local.viewKey) : '';
+		local.response = getCachedView(local.viewKey);
 
 		local.newViewRequired = !Len(local.response) 
 			? true : getSubSystem(arguments.action) == getSubSystem(request.context[fwa])
@@ -70,45 +59,35 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 				onRequest(local.targetPath);
 			};
 			clearFW1Request();
-
-			if ( variables.framework.siloSubsystems ) {
-				setCachedView(local.viewKey, local.response);
-			}
-		}
+			setCachedView(local.viewKey, local.response);
+		};
 
 		return local.response;
 	}
 
-	// exposed for use by eventHandler.cfc:onApplicationLoad()
-	public void function setupApplicationWrapper() {
-		lock scope='application' type='exclusive' timeout=20 {
-			super.setupApplicationWrapper();
-		};
-	}
-
-	public void function setupApplication() {
+	public any function setupApplication() {
 		var local = {};
 
 		if ( !StructKeyExists(application, 'pluginManager') ) {
 			location(url='/', addtoken=false);
-		}
+		};
 
-		lock scope='application' type='exclusive' timeout=20 {
-			if ( !StructKeyExists(application, variables.framework.applicationKey)  ){
-				application[variables.framework.applicationKey] = {};
-			}
+		lock scope='application' type='exclusive' timeout=50 {
 			application[variables.framework.applicationKey].pluginConfig = application.pluginManager.getConfig(ID=variables.framework.applicationKey);
 		};
 
-		// Bean Factory (uses DI/1)
-		// Be sure to pass in your comma-separated list of folders to scan for CFCs
-		local.beanFactory = new includes.factory.ioc('/#variables.framework.package#/app2/model,/#variables.framework.package#/app3/model');
+		// Bean Factory Options
 
-		// optionally set Mura to be the parent beanFactory
-		local.parentBeanFactory = application.serviceFactory;
-		local.beanFactory.setParent(local.parentBeanFactory);
+		// 1) Use DI/1
+		// just be sure to pass in your comma-separated list of folders to scan for CFCs
+		// local.beanFactory = new includes.factory.ioc('/#variables.framework.package#/app2/services,/#variables.framework.package#/app3/model');
+		// setBeanFactory( local.beanFactory );
 
-		setBeanFactory(local.beanFactory);
+		// OR
+
+		// 2) Use Mura's
+		local.pc = application[variables.framework.applicationKey].pluginConfig;
+		setBeanFactory(local.pc.getApplication(purge=false));
 	}
 
 	public void function setupRequest() {
@@ -120,7 +99,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 			lock scope='session' type='exclusive' timeout='10' {
 				session.siteid = 'default';
 			};
-		}
+		};
 
 		secureRequest();
 
@@ -129,8 +108,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 		
 		if ( StructKeyExists(url, application.configBean.getAppReloadKey()) ) { 
 			setupApplication();
-			//setupApplicationWrapper();
-		}
+		};
 
 		if ( Len(Trim(request.context.siteid)) && ( session.siteid != request.context.siteid) ) {
 			local.siteCheck = application.settingsManager.getSites();
@@ -139,11 +117,11 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 					session.siteid = request.context.siteid;
 				};
 			};
-		}
+		};
 
 		if ( !StructKeyExists(request.context, '$') ) {
-			request.context.$ = StructKeyExists(request, 'muraScope') ? request.muraScope : application.serviceFactory.getBean('muraScope').init(session.siteid);
-		}
+			request.context.$ = application.serviceFactory.getBean('muraScope').init(session.siteid);
+		};
 
 		request.context.pc = application[variables.framework.applicationKey].pluginConfig;
 		request.context.pluginConfig = application[variables.framework.applicationKey].pluginConfig;
@@ -158,7 +136,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 			&& httpRequestData.headers['X-#variables.framework.package#-AJAX'] 
 		) {
 			setupResponse();
-		}
+		};
 	}
 	
 	public void function setupResponse() {
@@ -172,10 +150,10 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 			StructDelete(request.context, '$');
 			WriteOutput(SerializeJSON(request.context));
 			abort;
-		}
+		};
 	}
 
-	public string function buildURL(required string action, string path='#resolvePath()#', any queryString='') {
+	public string function buildURL(required string action, string path='#variables.framework.baseURL#', string queryString='') {
 		var regx = '&?compactDisplay=[true|false]';
 		arguments.action = getFullyQualifiedAction(arguments.action);
 		if (
@@ -186,50 +164,23 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 		) {
 			var qs = 'compactDisplay=' & request.context.compactDisplay;
 			if ( !Find('?', arguments.action) ) {
-				if ( isSimpleValue(arguments.queryString) ) {
-					arguments.queryString = ListAppend(arguments.queryString, qs, '&');
-				} else if ( isStruct(arguments.queryString) ) {
-					structAppend(arguments.queryString, {"compactDisplay"=request.context.compactDisplay} );
-				}
+				arguments.queryString = ListAppend(arguments.queryString, qs, '&');
 			} else {
 				arguments.action = ListAppend(arguments.action, qs, '&');
-			}
-		}
-
+			};
+		};
 		return super.buildURL(argumentCollection=arguments);
-	}
-
-	public any function resolvePath(string path='#variables.framework.baseURL#') {
-		// don't modify a submitted path
-		if ( arguments.path != variables.framework.baseURL ) {
-			return arguments.path;
-		}
-
-		var uri =  getPageContext().getRequest().getRequestURI();
-		var arrURI = ListToArray(uri, '/');
-		var useIndex = YesNoFormat(application.configBean.getValue('indexfileinurls'));
-		var useSiteID = YesNoFormat(application.configBean.getValue('siteidinurls'));
-
-		if ( useSiteID && !useIndex ) {
-			ArrayDeleteAt(arrURI, 2);
-			uri = '/' & ArrayToList(arrURI, '/') & '/';
-		}
-
-		return !useSiteID && !useIndex
-			? '/' & ListRest(uri, '/')
-			: uri;
-	}
-
-	public any function isFrameworkInitialized() {
-		return super.isFrameworkInitialized() && StructKeyExists(application[variables.framework.applicationKey], 'cache');
 	}
 
 	
 	// ========================== Errors & Missing Views ==============================
 
 	public any function onError() output="true" {
-		//var scopes = 'application,arguments,cgi,client,cookie,form,local,request,server,session,url,variables';
-		var scopes = 'local,request,session';
+		// var scopes = 'application,arguments,cgi,client,cookie,form,local,request,server,session,url,variables';
+		// var scopes = 'application,arguments,cgi,form,local,request,server,session,url,variables';
+		var scopes = "arguments";
+		// var scopes = 'local,request,session,variables';
+		// var scopes = 'session';
 		var arrScopes = ListToArray(scopes);
 		var i = '';
 		var scope = '';
@@ -239,7 +190,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 				scope = arrScopes[i];
 				WriteDump(var=Evaluate(scope),label=UCase(scope));
 			};
-		}
+		};
 		abort;
 	}
 
@@ -249,25 +200,21 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 		// forward to appropriate error screen
 		if ( isFrontEndRequest() ) {
 			ArrayAppend(rc.errors, "The page you're looking for doesn't exist.");
-			redirect(action='app1:main.error', preserve='errors,isMissingView');
+			redirect(action='public:main.error', preserve='errors,isMissingView');
 		} else {
 			ArrayAppend(rc.errors, "The page you're looking for <strong>#rc.action#</strong> doesn't exist.");
 			redirect(action='admin:main', preserve='errors,isMissingView');
-		}
+		};
 	}
 
 	// ========================== Helper Methods ==============================
 
 	public any function secureRequest() {
-		return !isAdminRequest() || (StructKeyExists(session, 'mura') && ListFindNoCase(session.mura.memberships,'S2')) ? true :
-				!StructKeyExists(session, 'mura') 
-				|| !StructKeyExists(session, 'siteid') 
-				|| !application.permUtility.getModulePerm(application[variables.framework.applicationKey].pluginConfig.getModuleID(), session.siteid) 
-					? goToLogin() : true;
-	}
-
-	private void function goToLogin() {
-		location(url='#application.configBean.getContext()#/admin/index.cfm?muraAction=clogin.main&returnURL=/plugins/#variables.framework.package#/', addtoken=false)
+		if ( isAdminRequest() && !( IsDefined('session.mura') && ListFindNoCase(session.mura.memberships,'S2') ) ) {
+			if ( !StructKeyExists(session,'siteID') || !StructKeyExists(session,'mura') || !application.permUtility.getModulePerm(application[variables.framework.applicationKey].pluginConfig.getModuleID(),session.siteid) ) {
+				location(url='#application.configBean.getContext()#/admin/', addtoken=false);
+			};
+		};
 	}
 
 	public boolean function isAdminRequest() {
@@ -286,16 +233,16 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 		if ( StructKeyExists(request, '_fw1') ) {
 			for ( i=1; i <= ArrayLen(arrFW1Keys); i++ ) {
 				StructDelete(request._fw1, arrFW1Keys[i]);
-			}
-		}
-		request._fw1 = {
-			cgiScriptName = CGI.SCRIPT_NAME
-			, cgiRequestMethod = CGI.REQUEST_METHOD
-			, controllers = []
-			, requestDefaultsInitialized = false
-			, services = []
-			, doTrace = variables.framework.trace
-			, trace = []
+			};
+			request._fw1.requestDefaultsInitialized = false;
+			request._fw1 = {
+				cgiScriptName = CGI.SCRIPT_NAME
+				, cgiRequestMethod = CGI.REQUEST_METHOD
+				, controllers = []
+				, requestDefaultsInitialized = false
+				, services = []
+				, trace = []
+			};
 		};
 	}
 
@@ -306,7 +253,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 		var cache = getSessionCache();
 		if ( StructKeyExists(cache, 'views') && StructKeyExists(cache.views, arguments.viewKey) ) {
 			view = cache.views[arguments.viewKey];
-		}
+		};
 		return view;
 	}
 
@@ -328,7 +275,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 		var local = {};
 		if ( isCacheExpired() ) {
 			setSessionCache();
-		}
+		};
 		lock scope='session' type='readonly' timeout=10 {
 			local.cache = session[variables.framework.package];
 		};
@@ -342,7 +289,7 @@ component persistent="false" accessors="true" output="false" extends="includes.f
 			StructDelete(session, p);
 			session[p] = {
 				created = Now()
-				, expires = DateAdd('h', 1, Now())
+				, expires = DateAdd('s', 5, Now())
 				, sessionid = Hash(CreateUUID())
 				, views = {}
 			};

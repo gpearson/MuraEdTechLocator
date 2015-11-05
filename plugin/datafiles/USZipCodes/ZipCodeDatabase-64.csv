@@ -1,0 +1,5 @@
+"ZIPCode","State","City","County","StateFIPS","CountyFIPS","Latitude","Longitude","Preference","Type"
+"96941","FM","Pohnpei","Federated States Of Micro","64","3","6.89","158.21","A","POB"
+"96942","FM","Chuuk","Federated States Of Micro","64","3","7.33","151.65","A","POB"
+"96943","FM","Yap","Federated States Of Micro","64","3","9.54","138.13","A","POB"
+"96944","FM","Kosrae","Federated States Of Micro","64","3","5.31","162.97","A","POB"

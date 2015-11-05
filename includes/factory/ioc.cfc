@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2010-2014, Sean Corfield
+	Copyright (c) 2010-2013, Sean Corfield
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ component {
 		variables.config = config;
 		variables.beanInfo = { };
 		variables.beanCache = { };
-        variables.settersInfo = { };
-		variables.autoExclude = [ '/WEB-INF', '/Application.cfc',
-                                  'framework.cfc', 'ioc.cfc' ];
+		variables.autoExclude = [ '/WEB-INF', '/Application.cfc' ];
         variables.listeners = 0;
 		setupFrameworkDefaults();
 		return this;
@@ -57,7 +55,7 @@ component {
 	
 	
 	// programmatically register new beans with the factory (add an actual CFC)
-	public any function declareBean( string beanName, string dottedPath, boolean isSingleton = true, struct overrides = { } ) {
+	public any function declareBean( string beanName, string dottedPath, boolean isSingleton = true ) {
 		discoverBeans( variables.folders );
 		var singleDir = '';
 		if ( listLen( dottedPath, '.' ) > 1 ) {
@@ -68,8 +66,7 @@ component {
 		var cfcPath = replace( expandPath( '/' & replace( dottedPath, '.', '/', 'all' ) & '.cfc' ), chr(92), '/', 'all' );
 		var metadata = { 
 			name = beanName, qualifier = singleDir, isSingleton = isSingleton, 
-			path = cfcPath, cfc = dottedPath, metadata = cleanMetadata( dottedPath ),
-            overrides = overrides
+			path = cfcPath, cfc = dottedPath, metadata = cleanMetadata( dottedPath )
 		};
 		variables.beanInfo[ beanName ] = metadata;
         return this;
@@ -142,11 +139,9 @@ component {
             else bean = createObject( 'component', bean );
         }
 		for ( var property in properties ) {
-			if ( !isNull( properties[ property ] ) ) {
-				var args = { };
-				args[ property ] = properties[ property ];
-				evaluate( 'bean.set#property#( argumentCollection = args )' );
-			}
+			var args = { };
+			args[ property ] = properties[ property ];
+			evaluate( 'bean.set#property#( argumentCollection = args )' );
 		}
 		return bean;
 	}
@@ -235,9 +230,8 @@ component {
 				var n = arrayLen( md.properties );
 				for ( var i = 1; i <= n; ++i ) {
 					var property = md.properties[ i ];
-					if ( implicitSetters &&
-						 ( !structKeyExists( property, 'setter' ) ||
-                           isBoolean( property.setter ) && property.setter ) ) {
+					if ( implicitSetters ||
+							structKeyExists( property, 'setter' ) && isBoolean( property.setter ) && property.setter ) {
 						iocMeta.setters[ property.name ] = 'implicit';
 					}
 				}
@@ -486,9 +480,7 @@ component {
 			var injection = partialBean.injection[ name ];
 			for ( var property in injection.setters ) {
 				var args = { };
-                if ( structKeyExists( injection.overrides, property ) ) {
-                    args[ property ] = injection.overrides[ property ];
-				} else if ( structKeyExists( partialBean.injection, property ) ) {
+				if ( structKeyExists( partialBean.injection, property ) ) {
 					args[ property ] = partialBean.injection[ property ].bean;
 				} else if ( structKeyExists( variables, 'parent' ) && variables.parent.containsBean( property ) ) {
 					args[ property ] = variables.parent.getBean( property );
@@ -509,70 +501,36 @@ component {
 			var info = variables.beanInfo[ beanName ];
 			if ( structKeyExists( info, 'cfc' ) ) {
 				var metaBean = cachable( beanName );
-                var overrides = structKeyExists( info, 'overrides' ) ? info.overrides : { };
 				bean = metaBean.bean;
 				if ( metaBean.newObject ) {
 				    if ( structKeyExists( info.metadata, 'constructor' ) ) {
 					    var args = { };
 						for ( var arg in info.metadata.constructor ) {
-                            var argBean = { };
-                            // handle known required arguments
-                            if ( info.metadata.constructor[ arg ] ) {
-                                var beanMissing = true;
-                                if ( structKeyExists( overrides, arg ) ) {
-                                    args[ arg ] = overrides[ arg ];
-                                    beanMissing = false;
-                                } else if ( containsBean( arg ) ) {
-                                    argBean = resolveBeanCreate( arg, accumulator );
-                                    if ( structKeyExists( argBean, 'bean' ) ) {
-                                        args[ arg ] = argBean.bean;
-                                        beanMissing = false;
-                                    }
-                                }
-                                if ( beanMissing ) {
-								    throw 'bean not found: #arg#; while resolving constructor arguments for #beanName#';
-                                }
-                            } else {
-                                if ( structKeyExists( overrides, arg ) ) {
-                                    args[ arg ] = overrides[ arg ];
-                                } else if ( containsBean( arg ) ) {
-                                    // optional but present
-							        argBean = resolveBeanCreate( arg, accumulator );
-							        if ( structKeyExists( argBean, 'bean' ) ) {
-							            args[ arg ] = argBean.bean;
-							        }
-                                } else {
-                                    // optional but not present
-                                }
-                            }
+							var argBean = resolveBeanCreate( arg, accumulator );
+							// this throws a non-intuitive exception unless we step in...
+							if ( structKeyExists( argBean, 'bean' ) ) {
+							    args[ arg ] = argBean.bean;
+                            } else if ( info.metadata.constructor[ arg ] ) {
+								throw 'bean not found: #arg#; while resolving constructor arguments for #beanName#';
+							}
 						}
 						var __ioc_newBean = evaluate( 'bean.init( argumentCollection = args )' );
 						// if the constructor returns anything, it becomes the bean
 						// this allows for smart constructors that return things other
 						// than the CFC being created, such as implicit factory beans
 						// and automatic singletons etc (rare practices in CFML but...)
-						if ( !isNull( __ioc_newBean ) ) {
+						if ( isDefined( '__ioc_newBean' ) ) {
 						    bean = __ioc_newBean;
 							forceCache( bean, beanName );
 						}
 					}
 				}
                 if ( !structKeyExists( accumulator.injection, beanName ) ) {
-                    if ( !structKeyExists( variables.settersInfo, beanName ) ) {
-                        variables.settersInfo[ beanName ] = findSetters( bean, info.metadata );
-                    }
-				    var setterMeta = {
-                        setters = variables.settersInfo[ beanName ].setters,
-                        bean = bean,
-                        overrides = overrides
-                    };
+				    var setterMeta = findSetters( bean, info.metadata );
+				    setterMeta.bean = bean;
 				    accumulator.injection[ beanName ] = setterMeta; 
 				    for ( var property in setterMeta.setters ) {
-                        if ( structKeyExists( overrides, property ) ) {
-                            // skip resolution because we'll inject override
-                        } else {
-					        resolveBeanCreate( property, accumulator );
-                        }
+					    resolveBeanCreate( property, accumulator );
 				    }
                 }
 				accumulator.bean = bean;
@@ -624,7 +582,7 @@ component {
             throw 'singletonPattern and transientPattern are mutually exclusive';
         }
 				
-		variables.config.version = '0.5.0';
+		variables.config.version = '0.4.4';
 	}
 	
 	
