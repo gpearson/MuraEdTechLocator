@@ -13,25 +13,26 @@ http://www.apache.org/licenses/LICENSE-2.0
 <cfoutput>
 	<div class="art-block clearfix">
 		<div class="art-blockheader">
-			<h3 class="t">Import NCES School Building Data into Database</h3>
+			<h3 class="t">Generate USA Map Data Files</h3>
 		</div>
 		<div class="art-blockcontent">
-			<p class="alert-box notice">Please complete the following information to select the Comma Seperated School Database File that will be used to populate the Database Table.</p>
+			<p class="alert-box notice">Please submit this form to generate the XML Data Files used in the Flash USA Map on the main homepage.</p>
 			<hr>
 			<cfif not isDefined("FORM.formSubmit")>
-				<uForm:form action="" method="Post" id="ImportZipCodeDatabase" errors="#Session.FormErrors#" errorMessagePlacement="both"
+				<uForm:form action="" method="Post" id="GenerateUSAMapDataFiles" errors="#Session.FormErrors#" errorMessagePlacement="both"
 					commonassetsPath="/plugins/1To1TechLocator/library/uniForm/" showCancel="yes" cancelValue="<--- Return to Menu" cancelName="cancelButton"
 					cancelAction="?#HTMLEditFormat(rc.pc.getPackage())#action=admin:utilities.default&compactDisplay=false"
-					submitValue="Import Database" loadValidation="true" loadMaskUI="true" loadDateUI="true"
+					submitValue="Generate Map Data" loadValidation="true" loadMaskUI="true" loadDateUI="true"
 					loadTimeUI="true">
 					<input type="hidden" name="SiteID" value="#rc.$.siteConfig('siteID')#">
 					<input type="hidden" name="formSubmit" value="true">
-					<uForm:fieldset legend="CSV File to Upload">
-						<uform:field label="School Data" name="CSVFileToUpload" type="file" />
-					</uForm:fieldset>
+					<uform:Fieldset legend="Generate Map Data Files">
+						<uform:field label="Generate Files" name="CreateMapXMLDataFiles" type="select" hint="Generate XML Data Files?">
+							<uform:option display="Yes" value="1" />
+							<uform:option display="No" value="0" />
+						</uform:field>
+					</uform:Fieldset>
 				</uForm:form>
-			<cfelseif isDefined("FORM.formSubmit")>
-				<cfdump var="#FORM#">
 			</cfif>
 		</div>
 	</div>

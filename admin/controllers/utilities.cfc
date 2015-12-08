@@ -468,4 +468,607 @@ http://www.apache.org/licenses/LICENSE-2.0
 			<cflocation url="/plugins/#HTMLEditFormat(rc.pc.getPackage())#/index.cfm?ActionSuccessfull=False&Action=ImportSchoolDistricts" addtoken="false">
 		</cfif>
 	</cffunction>
+
+	<cffunction name="generatemapdatafiles" returntype="any" output="false">
+		<cfargument name="rc" required="true" type="struct" default="#StructNow()#">
+
+		<cfif not isDefined("FORM.formSubmit")>
+			<cflock timeout="60" scope="Session" type="Exclusive">
+				<cfset Session.FormData = #StructCopy(FORM)#>
+				<cfset Session.FormErrors = #ArrayNew()#>
+			</cflock>
+		<cfelseif isDefined("FORM.formSubmit")>
+			<cfset CurrentDir = #ExpandPath("*.csv")#>
+			<cfset USAMapXMLFileDir = #Left(Variables.CurrentDir, Find("*.csv", Variables.CurrentDir) - 1)# & "includes/assets/flash/">
+			<cfset USAMapXMLFilename = #Variables.USAMapXMLFileDir# & "usaMapSettings.xml">
+
+			<cfswitch expression="#FORM.CreateMapXMLDataFiles#">
+				<cfcase value="1">
+					<cfquery name="getAllSchoolDistricts" Datasource="#rc.$.globalConfig('datasource')#" username="#rc.$.globalConfig('dbusername')#" password="#rc.$.globalConfig('dbpassword')#">
+						Select NCES_ID, DistrictName, PhysicalAddress, PhysicalCity, PhysicalState, PhysicalZipCode, PhysicalZip4, PrimaryVoiceNumber, GeoCode_Latitude, GeoCode_Longitude, HighestGradeLevel, LowestGradeLevel, Total_NumberStudents, Total_OperationalSchools
+						From pSchoolDistricts
+					</cfquery>
+					<cfquery name="GetAlabamaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'AL' </cfquery>
+					<cfquery name="GetAlaskaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'AK' </cfquery>
+					<cfquery name="GetArizonaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'AZ' </cfquery>
+					<cfquery name="GetArkansasDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'AR' </cfquery>
+					<cfquery name="GetCaliforniaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'CA' </cfquery>
+					<cfquery name="GetColoradoDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'CO' </cfquery>
+					<cfquery name="GetConnecticutDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'CT' </cfquery>
+					<cfquery name="GetDelawareDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'DE' </cfquery>
+					<cfquery name="GetFloridaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'FL' </cfquery>
+					<cfquery name="GetGeorgiaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'GA' </cfquery>
+					<cfquery name="GetHawaiiDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'HI' </cfquery>
+					<cfquery name="GetIdahoDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'ID' </cfquery>
+					<cfquery name="GetIllinoisDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'IL' </cfquery>
+					<cfquery name="GetIndianaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'IN' </cfquery>
+					<cfquery name="GetIowaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'IA' </cfquery>
+					<cfquery name="GetKansasDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'KS' </cfquery>
+					<cfquery name="GetKansasDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'KS' </cfquery>
+					<cfquery name="GetKentuckyDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'KY' </cfquery>
+					<cfquery name="GetLouisianaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'LA' </cfquery>
+					<cfquery name="GetMaineDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'ME' </cfquery>
+					<cfquery name="GetMarylandDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'MD' </cfquery>
+					<cfquery name="GetMassachusettsDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'MA' </cfquery>
+					<cfquery name="GetMichiganDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'MI' </cfquery>
+					<cfquery name="GetMinnesotaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'MN' </cfquery>
+					<cfquery name="GetMississippiDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'MS' </cfquery>
+					<cfquery name="GetMissouriDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'MO' </cfquery>
+					<cfquery name="GetMontanaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'MT' </cfquery>
+					<cfquery name="GetNebraskaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'NE' </cfquery>
+					<cfquery name="GetNevadaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'NV' </cfquery>
+					<cfquery name="GetNewHampshireDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'NH' </cfquery>
+					<cfquery name="GetNewJerseyDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'NJ' </cfquery>
+					<cfquery name="GetNewMexicoDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'NM' </cfquery>
+					<cfquery name="GetNewYorkDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'NY' </cfquery>
+					<cfquery name="GetNorthCarolinaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'NC' </cfquery>
+					<cfquery name="GetNorthDakotaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'ND' </cfquery>
+					<cfquery name="GetOhioDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'OH' </cfquery>
+					<cfquery name="GetOklahomaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'OK' </cfquery>
+					<cfquery name="GetOregonDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'OR' </cfquery>
+					<cfquery name="GetPennsylvaniaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'PA' </cfquery>
+					<cfquery name="GetRhodeIslandDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'RI' </cfquery>
+					<cfquery name="GetSouthCarolinaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'SC' </cfquery>
+					<cfquery name="GetSouthDakotaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'SD' </cfquery>
+					<cfquery name="GetTennesseeDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'TN' </cfquery>
+					<cfquery name="GetTexasDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'TX' </cfquery>
+					<cfquery name="GetUtahDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'UT' </cfquery>
+					<cfquery name="GetVermontDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'VT' </cfquery>
+					<cfquery name="GetVirginiaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'VA' </cfquery>
+					<cfquery name="GetWashingtonDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'WA' </cfquery>
+					<cfquery name="GetWestVirginiaDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'WV' </cfquery>
+					<cfquery name="GetWisconsinDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'WI' </cfquery>
+					<cfquery name="GetWyomingDistricts" dbtype="query">Select * From getAllSchoolDistricts Where PhysicalState = 'WY' </cfquery>
+
+					<cfquery name="getAllSchoolBuildings" Datasource="#rc.$.globalConfig('datasource')#" username="#rc.$.globalConfig('dbusername')#" password="#rc.$.globalConfig('dbpassword')#">
+						Select NCES_ID, SchoolDistrict_NCES_ID, SchoolName, PhysicalAddress, PhysicalCity, PhysicalState, PhysicalZipCode, PhysicalZip4, PrimaryVoiceNumber, GeoCode_Latitude, GeoCode_Longitude, BuildingLowestGradeLevel, BuildingHighestGradeLevel
+						From pSchoolBuildings
+					</cfquery>
+
+					<cfquery name="GetAlabamaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'AL' </cfquery>
+					<cfquery name="GetAlaskaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'AK' </cfquery>
+					<cfquery name="GetArizonaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'AZ' </cfquery>
+					<cfquery name="GetArkansasBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'AR' </cfquery>
+					<cfquery name="GetCaliforniaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'CA' </cfquery>
+					<cfquery name="GetColoradoBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'CO' </cfquery>
+					<cfquery name="GetConnecticutBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'CT' </cfquery>
+					<cfquery name="GetDelawareBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'DE' </cfquery>
+					<cfquery name="GetFloridaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'FL' </cfquery>
+					<cfquery name="GetGeorgiaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'GA' </cfquery>
+					<cfquery name="GetHawaiiBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'HI' </cfquery>
+					<cfquery name="GetIdahoBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'ID' </cfquery>
+					<cfquery name="GetIllinoisBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'IL' </cfquery>
+					<cfquery name="GetIndianaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'IN' </cfquery>
+					<cfquery name="GetIowaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'IA' </cfquery>
+					<cfquery name="GetKansasBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'KS' </cfquery>
+					<cfquery name="GetKansasBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'KS' </cfquery>
+					<cfquery name="GetKentuckyBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'KY' </cfquery>
+					<cfquery name="GetLouisianaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'LA' </cfquery>
+					<cfquery name="GetMaineBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'ME' </cfquery>
+					<cfquery name="GetMarylandBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'MD' </cfquery>
+					<cfquery name="GetMassachusettsBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'MA' </cfquery>
+					<cfquery name="GetMichiganBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'MI' </cfquery>
+					<cfquery name="GetMinnesotaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'MN' </cfquery>
+					<cfquery name="GetMississippiBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'MS' </cfquery>
+					<cfquery name="GetMissouriBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'MO' </cfquery>
+					<cfquery name="GetMontanaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'MT' </cfquery>
+					<cfquery name="GetNebraskaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'NE' </cfquery>
+					<cfquery name="GetNevadaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'NV' </cfquery>
+					<cfquery name="GetNewHampshireBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'NH' </cfquery>
+					<cfquery name="GetNewJerseyBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'NJ' </cfquery>
+					<cfquery name="GetNewMexicoBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'NM' </cfquery>
+					<cfquery name="GetNewYorkBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'NY' </cfquery>
+					<cfquery name="GetNorthCarolinaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'NC' </cfquery>
+					<cfquery name="GetNorthDakotaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'ND' </cfquery>
+					<cfquery name="GetOhioBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'OH' </cfquery>
+					<cfquery name="GetOklahomaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'OK' </cfquery>
+					<cfquery name="GetOregonBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'OR' </cfquery>
+					<cfquery name="GetPennsylvaniaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'PA' </cfquery>
+					<cfquery name="GetRhodeIslandBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'RI' </cfquery>
+					<cfquery name="GetSouthCarolinaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'SC' </cfquery>
+					<cfquery name="GetSouthDakotaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'SD' </cfquery>
+					<cfquery name="GetTennesseeBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'TN' </cfquery>
+					<cfquery name="GetTexasBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'TX' </cfquery>
+					<cfquery name="GetUtahBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'UT' </cfquery>
+					<cfquery name="GetVermontBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'VT' </cfquery>
+					<cfquery name="GetVirginiaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'VA' </cfquery>
+					<cfquery name="GetWashingtonBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'WA' </cfquery>
+					<cfquery name="GetWestVirginiaBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'WV' </cfquery>
+					<cfquery name="GetWisconsinBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'WI' </cfquery>
+					<cfquery name="GetWyomingBuildings" dbtype="query">Select * From getAllSchoolBuildings Where PhysicalState = 'WY' </cfquery>
+
+					<cfoutput><cfsavecontent variable="xmlData">
+						<?xml version="1.0" encoding="UTF-8"?>
+						<datas>
+							<mapSettings stageOutlineColor = 'FFFFFF' urlTarget = '_self' offColor = 'ABAB9B' offStateTextColor = 'FFFFFF' />
+							<cfif GetAlabamaDistricts.RecordCount or GetAlabamaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=ALABAMA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ALABAMA</b><br>Number School Districts: <cfoutput>#GetAlabamaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetAlabamaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+								<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=ALABAMA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ALABAMA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetAlaskaDistricts.RecordCount or GetAlaskaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=ALASKA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ALASKA</b><br>Number School Districts: <cfoutput>#GetAlaskaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetAlaskaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=ALASKA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ALASKA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetArizonaDistricts.RecordCount or GetArizonaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=ARIZONA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ARIZONA</b><br>Number School Districts: <cfoutput>#GetArizonaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetArizonaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=ARIZONA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ARIZONA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetArkansasDistricts.RecordCount or GetArkansasBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=ARKANSAS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ARKANSAS</b><br>Number School Districts: <cfoutput>#GetArkansasDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetArkansasBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=ARKANSAS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ARKANSAS</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetCaliforniaDistricts.RecordCount or GetCaliforniaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=CALIFORNIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>CALIFORNIA</b><br>Number School Districts: <cfoutput>#GetCaliforniaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetCaliforniaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=CALIFORNIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>CALIFORNIA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetColoradoDistricts.RecordCount or GetColoradoBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=COLORADO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>COLORADO</b><br>Number School Districts: <cfoutput>#GetColoradoDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetColoradoBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=COLORADO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>COLORADO</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetConnecticutDistricts.RecordCount or GetConnecticutBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=CONNECTICUT' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>CONNECTICUT</b><br>Number School Districts: <cfoutput>#GetConnecticutDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetConnecticutBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=CONNECTICUT' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>CONNECTICUT</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetDelawareDistricts.RecordCount or GetDelawareBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=DELAWARE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>DELAWARE</b><br>Number School Districts: <cfoutput>#GetDelawareDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetDelawareBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=DELAWARE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>DELAWARE</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetIndianaDistricts.RecordCount or GetIndianaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=DISTRICTOFCOLUMBIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>DISTRICT OF COLUMBIA</b> ]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=DISTRICTOFCOLUMBIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>DISTRICT OF COLUMBIA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetFloridaDistricts.RecordCount or GetFloridaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=FLORIDA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>FLORIDA</b><br>Number School Districts: <cfoutput>#GetFloridaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetFloridaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=FLORIDA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>FLORIDA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetGeorgiaDistricts.RecordCount or GetGeorgiaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=GEORGIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>GEORGIA</b><br>Number School Districts: <cfoutput>#GetGeorgiaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetGeorgiaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=GEORGIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>GEORGIA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetHawaiiDistricts.RecordCount or GetHawaiiBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=HAWAII' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>HAWAII</b><br>Number School Districts: <cfoutput>#GetHawaiiDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetHawaiiBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=HAWAII' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>HAWAII</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetIdahoDistricts.RecordCount or GetIdahoBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=IDAHO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>IDAHO</b><br>Number School Districts: <cfoutput>#GetIdahoDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetIdahoBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=IDAHO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>IDAHO</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetIllinoisDistricts.RecordCount or GetIllinoisBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=ILLINOIS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ILLINOIS</b><br>Number School Districts: <cfoutput>#GetIllinoisDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetIllinoisBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=ILLINOIS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>ILLINOIS</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetIndianaDistricts.RecordCount or GetIndianaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=INDIANA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>INDIANA</b><br>Number School Districts: <cfoutput>#GetIndianaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetIndianaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=INDIANA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>INDIANA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetIndianaDistricts.RecordCount or GetIowaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=IOWA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>IOWA</b><br>Number School Districts: <cfoutput>#GetIowaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetIowaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=IOWA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>IOWA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetKansasDistricts.RecordCount or GetKansasBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=KANSAS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>KANSAS</b><br>Number School Districts: <cfoutput>#GetKansasDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetKansasBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=KANSAS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>KANSAS</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetKentuckyDistricts.RecordCount or GetKentuckyBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=KENTUCKY' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>KENTUCKY</b><br>Number School Districts: <cfoutput>#GetKentuckyDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetKentuckyBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=KENTUCKY' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>KENTUCKY</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetLouisianaDistricts.RecordCount or GetLouisianaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=LOUISIANA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>LOUISIANA</b><br>Number School Districts: <cfoutput>#GetLouisianaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetLouisianaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=LOUISIANA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>LOUISIANA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMaineDistricts.RecordCount or GetMaineBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MAINE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MAINE</b><br>Number School Districts: <cfoutput>#GetMaineDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMaineBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MAINE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MAINE</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMarylandDistricts.RecordCount or GetMarylandBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MARYLAND' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MARYLAND</b><br>Number School Districts: <cfoutput>#GetMarylandDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMarylandBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MARYLAND' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MARYLAND</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMassachusettsDistricts.RecordCount or GetMassachusettsBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MASSACHUSETTS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MASSACHUSETTS</b><br>Number School Districts: <cfoutput>#GetMassachusettsDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMassachusettsBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MASSACHUSETTS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MASSACHUSETTS</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMichiganDistricts.RecordCount or GetMichiganBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MICHIGAN' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MICHIGAN</b><br>Number School Districts: <cfoutput>#GetMichiganDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMichiganBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MICHIGAN' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MICHIGAN</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMinnesotaDistricts.RecordCount or GetMinnesotaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MINNESOTA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MINNESOTA</b><br>Number School Districts: <cfoutput>#GetMinnesotaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMinnesotaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MINNESOTA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MINNESOTA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMississippiDistricts.RecordCount or GetMississippiBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MISSISSIPPI' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MISSISSIPPI</b><br>Number School Districts: <cfoutput>#GetMississippiDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMississippiBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MISSISSIPPI' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MISSISSIPPI</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMissouriDistricts.RecordCount or GetMissouriBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MISSOURI' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MISSOURI</b><br>Number School Districts: <cfoutput>#GetMissouriDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMissouriBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MISSOURI' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MISSOURI</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetMontanaDistricts.RecordCount or GetMontanaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=MONTANA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MONTANA</b><br>Number School Districts: <cfoutput>#GetMontanaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetMontanaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=MONTANA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>MONTANA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNebraskaDistricts.RecordCount or GetNebraskaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NEBRASKA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEBRASKA</b><br>Number School Districts: <cfoutput>#GetNebraskaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNebraskaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NEBRASKA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEBRASKA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNevadaDistricts.RecordCount or GetNevadaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NEVADA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEVADA</b><br>Number School Districts: <cfoutput>#GetNevadaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNevadaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NEVADA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEVADA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNewHampshireDistricts.RecordCount or GetNewHampshireBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NEWHAMPSHIRE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW HAMPSHIRE</b><br>Number School Districts: <cfoutput>#GetNewHampshireDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNewHampshireBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NEWHAMPSHIRE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW HAMPSHIRE</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNewJerseyDistricts.RecordCount or GetNewJerseyBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NEWJERSEY' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW JERSEY</b><br>Number School Districts: <cfoutput>#GetNewJerseyDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNewJerseyBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NEWJERSEY' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW JERSEY</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNewMexicoDistricts.RecordCount or GetNewMexicoBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NEWMEXICO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW MEXICO</b><br>Number School Districts: <cfoutput>#GetNewMexicoDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNewMexicoBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NEWMEXICO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW MEXICO</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNewYorkDistricts.RecordCount or GetNewYorkBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NEWYORK' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW YORK</b><br>Number School Districts: <cfoutput>#GetNewYorkDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNewYorkBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NEWYORK' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NEW YORK</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNorthCarolinaDistricts.RecordCount or GetNorthCarolinaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NORTHCAROLINA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NORTH CAROLINA</b><br>Number School Districts: <cfoutput>#GetNorthCarolinaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNorthCarolinaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NORTHCAROLINA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NORTH CAROLINA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetNorthDakotaDistricts.RecordCount or GetNorthDakotaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=NORTHDAKOTA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NORTH DAKOTA</b><br>Number School Districts: <cfoutput>#GetNorthDakotaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetNorthDakotaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=NORTHDAKOTA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>NORTH DAKOTA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetOhioDistricts.RecordCount or GetOhioBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=OHIO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>OHIO</b><br>Number School Districts: <cfoutput>#GetOhioDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetOhioBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=OHIO' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>OHIO</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetOklahomaDistricts.RecordCount or GetOklahomaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=OKLAHOMA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>OKLAHOMA</b><br>Number School Districts: <cfoutput>#GetOklahomaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetOklahomaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=OKLAHOMA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>OKLAHOMA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetOregonDistricts.RecordCount or GetOregonBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=OREGON' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>OREGON</b><br>Number School Districts: <cfoutput>#GetOregonDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetOregonBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=OREGON' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>OREGON</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetPennsylvaniaDistricts.RecordCount or GetPennsylvaniaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=PENNSYLVANIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>PENNSYLVANIA</b><br>Number School Districts: <cfoutput>#GetPennsylvaniaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetPennsylvaniaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=PENNSYLVANIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>PENNSYLVANIA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetRhodeIslandDistricts.RecordCount or GetRhodeIslandBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=RHODEISLAND' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>RHODE ISLAND</b><br>Number School Districts: <cfoutput>#GetRhodeIslandDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetRhodeIslandBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=RHODEISLAND' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>RHODE ISLAND</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetSouthCarolinaDistricts.RecordCount or GetSouthCarolinaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=SOUTHCAROLINA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>SOUTH CAROLINA</b><br>Number School Districts: <cfoutput>#GetSouthCarolinaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetSouthCarolinaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=SOUTHCAROLINA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>SOUTH CAROLINA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetSouthDakotaDistricts.RecordCount or GetSouthDakotaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=SOUTHDAKOTA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>SOUTH DAKOTA</b><br>Number School Districts: <cfoutput>#GetSouthDakotaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetSouthDakotaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=SOUTHDAKOTA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>SOUTH DAKOTA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetTennesseeDistricts.RecordCount or GetTennesseeBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=TENNESSEE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>TENNESSEE</b><br>Number School Districts: <cfoutput>#GetTennesseeDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetTennesseeBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=TENNESSEE' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>TENNESSEE</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetTexasDistricts.RecordCount or GetTexasBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=TEXAS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>TEXAS</b><br>Number School Districts: <cfoutput>#GetTexasDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetTexasBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=TEXAS' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>TEXAS</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetUtahDistricts.RecordCount or GetUtahBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=UTAH' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>UTAH</b><br>Number School Districts: <cfoutput>#GetUtahDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetUtahBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=UTAH' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>UTAH</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetVermontDistricts.RecordCount or GetVermontBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=VERMONT' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>VERMONT</b><br>Number School Districts: <cfoutput>#GetVermontDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetVermontBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=VERMONT' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>VERMONT</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetVirginiaDistricts.RecordCount or GetVirginiaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=VIRGINIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>VIRGINIA</b><br>Number School Districts: <cfoutput>#GetVirginiaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetVirginiaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=VIRGINIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>VIRGINIA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetWashingtonDistricts.RecordCount or GetWashingtonBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=WASHINGTON' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WASHINGTON</b><br>Number School Districts: <cfoutput>#GetWashingtonDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetWashingtonBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=WASHINGTON' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WASHINGTON</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetWestVirginiaDistricts.RecordCount or GetWestVirginiaBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=WESTVIRGINIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WEST VIRGINIA</b><br>Number School Districts: <cfoutput>#GetWestVirginiaDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetWestVirginiaBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=WESTVIRGINIA' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WEST VIRGINIA</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetWisconsinDistricts.RecordCount or GetWisconsinBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=WISCONSIN' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WISCONSIN</b><br>Number School Districts: <cfoutput>#GetWisconsinDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetWisconsinBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=WISCONSIN' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WISCONSIN</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+							<cfif GetWyomingDistricts.RecordCount or GetWyomingBuildings.RecordCount>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:main.viewstate&State=WYOMING' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WYOMING</b><br>Number School Districts: <cfoutput>#GetWyomingDistricts.RecordCount#</cfoutput><br>Number School Buildings: <cfoutput>#GetWyomingBuildings.RecordCount#</cfoutput>]]>
+							</stateData>
+							<cfelse>
+							<stateData url = '/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:contactus.default&State=WYOMING' stateMode = 'ON' initialProvincesColor= 'B12401' provinceOverColor = 'E32F02' provinceSelectedColor = '993300' initialProvinceTextColor = 'FF9900' provinceTextOverColor = '2D5986' provinceTextSelectedColor = '1C3753' tooltipWidth = '200'>
+								<![CDATA[ <b>WYOMING</b><br>If you are current doing a 1:1 Inititive in a school district or school building within this state, please click to complete a form that will be submitted to us so we can populate the School Districts and Buildings for this state.]]>
+							</stateData>
+							</cfif>
+						</datas>
+					</cfsavecontent></cfoutput>
+					<cffile action="write" output="#Variables.xmlData#" file="#Variables.USAMapXMLFilename#" addNewLine="No">
+				</cfcase>
+				<cfcase value="0">
+
+				</cfcase>
+			</cfswitch>
+		</cfif>
+
+	</cffunction>
 </cfcomponent>

@@ -62,6 +62,23 @@ http://www.apache.org/licenses/LICENSE-2.0
 							<li class="<cfif rc.action contains 'admin:instructions'>active</cfif>">
 								<a href="#buildURL('admin:instructions')#"><i class="icon-info-sign"></i> Instructions</a>
 							</li>
+							<li class="<cfif rc.action contains 'admin:utilities'>active</cfif>">
+								<a href="##" class="dropdown-toggle" data-toggle="dropdown">Utilities <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li class="<cfif rc.action eq 'admin:utilities.importzipcodes'>active</cfif>">
+										<a href="#buildURL('admin:utilities.importzipcodes')#"><i class="icon-leaf"></i> Import Zip Codes</a>
+									</li>
+									<li class="<cfif rc.action eq 'admin:utilities.importncespublicschooldistrictdata'>active</cfif>">
+										<a href="#buildURL('admin:utilities.importncespublicschooldistrictdata')#"><i class="icon-leaf"></i> Import Public School Districts</a>
+									</li>
+									<li class="<cfif rc.action eq 'admin:utilities.importncespublicschoolbuildingdata'>active</cfif>">
+										<a href="#buildURL('admin:utilities.importncespublicschoolbuildingdata')#"><i class="icon-leaf"></i> Import Public School Buildings</a>
+									</li>
+									<li class="<cfif rc.action eq 'admin:utilities.generatemapdatafiles'>active</cfif>">
+										<a href="#buildURL('admin:utilities.generatemapdatafiles')#"><i class="icon-leaf"></i> Generate Map Data Files</a>
+									</li>
+								</ul>
+							</li>
 						</ul><!--- /.nav --->
 
 					</div><!--- /.navbar-inner --->

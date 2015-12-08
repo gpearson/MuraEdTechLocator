@@ -43,6 +43,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 				<li><a href="#buildurl('admin:utilities.importzipcodes')#">Import ZipCode Database</a></li>
 				<li><a href="#buildurl('admin:utilities.importncespublicschooldistrictdata')#">Import NCES Public School District Data</a></li>
 				<li><a href="#buildurl('admin:utilities.importncespublicschoolbuildingdata')#">Import NCES Public School Building Data</a></li>
+				<li><a href="#buildurl('admin:utilities.generatemapdatafiles')#">Generate USA Map Data File</a></li>
 			</UL>
 		</li>
 	</ul>
