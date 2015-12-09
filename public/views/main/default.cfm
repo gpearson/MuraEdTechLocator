@@ -13,6 +13,24 @@ http://www.apache.org/licenses/LICENSE-2.0
 	<cfif isDefined("URL.SentInquiry") and isDefined("URL.StateToPopulate")>
 		<p class="alert-box success">Your Inquiry to have another state populated with information has been sent. You will receive an email back when you are able to go through the process to share your 1:1 School Inititive</p>
 	</cfif>
+	<cfif isDefined("URL.UserRegistrationSuccessfull") and isDefined("URL.UserAction")>
+		<cfswitch expression="#URL.UserRegistrationSuccessfull#">
+			<cfcase value="true">
+				<cfswitch expression="#URL.UserAction#">
+					<cfcase value="AccountCreated">
+						<p class="alert-box success">In the next few minutes you will receive an email with a special link to activate your account. Once this has been done, you will be able to login and update your information regarding the 1:1 Inititive you are doing in your district.</p>
+					</cfcase>
+					<cfcase value="AccountVerified">
+						<p class="alert-box success">Your account has been verified. You are now able to login with your email address and the password you supplied.</p>
+					</cfcase>
+				</cfswitch>
+			</cfcase>
+			<cfcase value="false">
+
+			</cfcase>
+		</cfswitch>
+
+	</cfif>
 	<p><div align="center"><h5>To view 1:1 program initiatives in a state, simply click on an active state.</h5></div></p>
 	<script type="text/javascript" src="/plugins/#HTMLEditFormat(rc.pc.getPackage())#/includes/assets/js/swfobject.js"></script>
 	<div id="swf" align="center">

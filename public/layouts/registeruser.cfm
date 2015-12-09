@@ -4,7 +4,7 @@
 <html dir="ltr" lang="en-US">
 	<head>
 		<meta charset="utf-8">
-		<title>1:1 Schools | 1:1 Area Programs  - Contact Us</title>
+		<title>1:1 Schools | 1:1 Area Programs  - Register Account</title>
 		<meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">
 		<meta name="ROBOTS" CONTENT="INDEX, FOLLOW" />
 		<meta name="Author" content="Graham Pearson, webmaster@yourcfpro.com" />
