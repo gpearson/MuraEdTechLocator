@@ -30,10 +30,11 @@
 			<tr bgcolor="##CCCCCC" style="Font-Family: Arial; Font-Weight: Bold; Font-Size: 14px;">
 				<td>School District</td>
 				<td>Physical Address</td>
-				<td>Primary Phone Number</td>
+				<td>Phone Number</td>
 				<td>Total School Buildings</td>
 				<td>Total Students</td>
-				<td>Lowest / Highest Grade Level</td>
+				<td>Grade Level</td>
+				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 			</tr>
 		</thead>
@@ -47,6 +48,7 @@
 				<td>#Session.getSchoolDistrictsInState.Total_OperationalSchools#</td>
 				<td>#Session.getSchoolDistrictsInState.Total_NumberStudents#</td>
 				<td>#Session.getSchoolDistrictsInState.LowestGradeLevel# / #Session.getSchoolDistrictsInState.HighestGradeLevel#</td>
+				<td>View</td>
 				<td>View</td>
 				</tr>
 				</cfloop>

@@ -47,7 +47,29 @@
 				<nav class="art-nav">
 					<div class="art-nav-inner">
 						<ul class="art-hmenu">
-							<li><a href="/index.cfm" class="active">Home</a></li>
+							<li><a href="/index.cfm" class="active">Home</a>
+								<cfif isDefined("Session.Mura")>
+								<cfif Session.Mura.IsLoggedIn EQ "false">
+									<ul>
+										<li><a href="/index.cfm?display=login">Account Login</a></li>
+										<li><a href="/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:usermenu.lostpassword">Lost Password</a></li>
+										<li><a href="/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:registeruser.default">Create Account</a></li>
+									</ul>
+								<cfelseif Session.Mura.IsLoggedIn EQ "true">
+									<ul>
+										<li><a href="/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:usermenu.changepassword">Change Password</a></li>
+										<li><a href="/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:usermenu.editprofile">Manage Account</a></li>
+										<li><a href="/index.cfm?doaction=logout">Account Logout</a></li>
+									</ul>
+								</cfif>
+							<cfelse>
+								<ul>
+									<li><a href="/index.cfm?display=login">Account Login</a></li>
+									<li><a href="/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:usermenu.lostpassword">Lost Password</a></li>
+									<li><a href="/plugins/1To1TechLocator/index.cfm?1To1TechLocatoraction=public:registeruser.default">Create Account</a></li>
+								</ul>
+							</cfif>
+							</li>
 						</ul>
 					</div>
 				</nav>
