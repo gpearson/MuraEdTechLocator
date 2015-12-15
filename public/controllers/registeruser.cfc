@@ -73,7 +73,8 @@ http://www.apache.org/licenses/LICENSE-2.0
 				<cfset NewUserID = #AddNewAccount.getUserID()#>
 
 				<cfquery name="insertUserMatrixInfo" Datasource="#rc.$.globalConfig('datasource')#" username="#rc.$.globalConfig('dbusername')#" password="#rc.$.globalConfig('dbpassword')#">
-					Insert into pUserMatrix(User_ID,Site_ID,LastUpdateBy,LastUpdated) Values('#Variables.NewUserID#','#rc.$.siteConfig("siteID")#','System',#Now()#)
+					Insert into pUserMatrix(User_ID,Site_ID,SchoolDistrict_ZipCode,LastUpdateBy,LastUpdated)
+					 Values('#Variables.NewUserID#','#rc.$.siteConfig("siteID")#','FORM.DistrictZipCode',System',#Now()#)
 				</cfquery>
 
 				<cfset SendActivationEmail = #SendEmailCFC.SendAccountActivationEmail(Variables.NewUserID)#>

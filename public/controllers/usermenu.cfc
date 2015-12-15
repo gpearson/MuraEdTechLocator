@@ -54,14 +54,14 @@ http://www.apache.org/licenses/LICENSE-2.0
 			</cfif>
 
 			<cfquery name="getSelectedSchoolDistrict" Datasource="#rc.$.globalConfig('datasource')#" username="#rc.$.globalConfig('dbusername')#" password="#rc.$.globalConfig('dbpassword')#">
-				Select OrganizationName, StateDOE_IDNumber
-				From eMembership
-				Where StateDOE_IDNumber = <cfqueryparam value="#FORM.Company#" cfsqltype="cf_sql_varchar"> and Site_ID = <cfqueryparam value="#rc.$.siteConfig('siteID')#" cfsqltype="cf_sql_varchar">
+				Select NCES_ID, DistrictName
+				From pSchoolDistricts
+				Where NCES_ID = <cfqueryparam value="#FORM.Company#" cfsqltype="cf_sql_varchar"> and Site_ID = <cfqueryparam value="#rc.$.siteConfig('siteID')#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 
 			<cfquery name="getOrigionalUserValues" Datasource="#rc.$.globalConfig('datasource')#" username="#rc.$.globalConfig('dbusername')#" password="#rc.$.globalConfig('dbpassword')#">
-				Select fName, LName, Email, Company, JobTitle, mobilePhone
-				From tusers
+				SELECT pUserMatrix.School_District, pUserMatrix.SchoolDistrict_ZipCode, tusers.Fname, tusers.MobilePhone, tusers.Lname, tusers.UserID, tusers.UserName, tusers.Email, tusers.Company, tusers.JobTitle
+				FROM tusers INNER JOIN pUserMatrix ON pUserMatrix.User_ID = tusers.UserID
 				Where UserID = <cfqueryparam value="#FORM.UserID#" cfsqltype="cf_sql_varchar"> and SiteID = <cfqueryparam value="#rc.$.siteConfig('siteID')#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 
@@ -76,7 +76,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 				</cfquery>
 			</cfif>
 
-			<cfif Session.FormData.lName NEQ getOrigionalUserValues.FName>
+			<cfif Session.FormData.lName NEQ getOrigionalUserValues.LName>
 				<cfset UserEditProfile = 1>
 				<cfquery name="setNewAccountPassword" Datasource="#Session.FormData.PluginInfo.Datasource#" username="#Session.FormData.PluginInfo.DBUsername#" password="#Session.FormData.PluginInfo.DBPassword#">
 					Update tusers
@@ -94,11 +94,20 @@ http://www.apache.org/licenses/LICENSE-2.0
 				</cfquery>
 			</cfif>
 
+			<cfif Session.FormData.Company NEQ getOrigionalUserValues.School_District>
+				<cfset UserEditProfile = 1>
+				<cfquery name="setNewAccountPassword" Datasource="#Session.FormData.PluginInfo.Datasource#" username="#Session.FormData.PluginInfo.DBUsername#" password="#Session.FormData.PluginInfo.DBPassword#">
+					Update pUserMatrix
+					Set School_District = <cfqueryparam value="#Session.FormData.Company#" cfsqltype="cf_sql_varchar">
+					Where User_ID = <cfqueryparam value="#Form.UserID#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+			</cfif>
+
 			<cfif Session.FormData.Company NEQ getOrigionalUserValues.Company>
 				<cfset UserEditProfile = 1>
 				<cfquery name="setNewAccountPassword" Datasource="#Session.FormData.PluginInfo.Datasource#" username="#Session.FormData.PluginInfo.DBUsername#" password="#Session.FormData.PluginInfo.DBPassword#">
 					Update tusers
-					Set Company = <cfqueryparam value="#getSelectedSchoolDistrict.OrganizationName#" cfsqltype="cf_sql_varchar">
+					Set Company = <cfqueryparam value="#getSelectedSchoolDistrict.DistrictName#" cfsqltype="cf_sql_varchar">
 					Where UserID = <cfqueryparam value="#Form.UserID#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 			</cfif>
@@ -122,7 +131,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 			</cfif>
 
 			<cfif Variables.UserEditProfile EQ 1>
-				<cfset Session.Mura.Company = #getSelectedSchoolDistrict.OrganizationName#>
+				<cfset Session.Mura.Company = #getSelectedSchoolDistrict.DistrictName#>
 				<cfset Session.Mura.fName = #Session.FormData.fName#>
 				<cfset Session.Mura.lName = #Session.FormData.lName#>
 				<cfset Session.Mura.Email = #Session.FormData.Email#>
@@ -203,11 +212,20 @@ http://www.apache.org/licenses/LICENSE-2.0
 				</cfquery>
 			</cfif>
 
+			<cfif Session.FormData.Company NEQ getOrigionalUserValues.School_District>
+				<cfset UserEditProfile = 1>
+				<cfquery name="setNewAccountPassword" Datasource="#Session.FormData.PluginInfo.Datasource#" username="#Session.FormData.PluginInfo.DBUsername#" password="#Session.FormData.PluginInfo.DBPassword#">
+					Update pUserMatrix
+					Set School_District = <cfqueryparam value="#Session.FormData.Company#" cfsqltype="cf_sql_varchar">
+					Where User_ID = <cfqueryparam value="#Form.UserID#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+			</cfif>
+
 			<cfif Session.FormData.Company NEQ getOrigionalUserValues.Company>
 				<cfset UserEditProfile = 1>
 				<cfquery name="setNewAccountPassword" Datasource="#Session.FormData.PluginInfo.Datasource#" username="#Session.FormData.PluginInfo.DBUsername#" password="#Session.FormData.PluginInfo.DBPassword#">
 					Update tusers
-					Set Company = <cfqueryparam value="#getSelectedSchoolDistrict.OrganizationName#" cfsqltype="cf_sql_varchar">
+					Set Company = <cfqueryparam value="#getSelectedSchoolDistrict.DistrictName#" cfsqltype="cf_sql_varchar">
 					Where UserID = <cfqueryparam value="#Form.UserID#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 			</cfif>
@@ -328,6 +346,83 @@ http://www.apache.org/licenses/LICENSE-2.0
 			</cfif>
 
 		</cfif>
+	</cffunction>
+
+
+	<cffunction name="cancelregistration" returntype="any" output="false">
+		<cfargument name="rc" required="true" type="struct" default="#StructNew()#">
+
+		<cfif isDefined("FORM.formSubmit")>
+			<cfset Session.FormErrors = #ArrayNew()#>
+			<cfset Session.FormData = #StructCopy(FORM)#>
+
+			<cfif not isDefined("Session.FormData.PluginInfo")>
+				<cfset Session.FormData.PluginInfo = StructNew()>
+				<cfset Session.FormData.PluginInfo.Datasource = #rc.$.globalConfig('datasource')#>
+				<cfset Session.FormData.PluginInfo.DBUserName = #rc.$.globalConfig('dbusername')#>
+				<cfset Session.FormData.PluginInfo.DBPassword = #rc.$.globalConfig('dbpassword')#>
+				<cfset Session.FormData.PluginInfo.PackageName = #HTMLEditFormat(rc.pc.getPackage())#>
+				<cfset Session.FormData.PluginInfo.SiteID = #rc.$.siteConfig('siteID')#>
+			</cfif>
+
+			<cfif #HASH(FORM.HumanChecker)# NEQ FORM.HumanCheckerhash>
+				<cflock timeout="60" scope="SESSION" type="Exclusive">
+					<cfscript>
+						errormsg = {property="HumanChecker",message="The Characters entered did not match what was displayed"};
+						arrayAppend(Session.FormErrors, errormsg);
+					</cfscript>
+				</cflock>
+				<cflocation addtoken="true" url="?#HTMLEditFormat(rc.pc.getPackage())#action=public:usermenu.cancelregistration&FormRetry=True&EventID=#FORM.EventID#&RegistrationID=#FORM.RegistrationID#">
+			</cfif>
+
+			<cfswitch expression="#FORM.CancelEventOption#">
+				<cfcase value="Yes">
+					<cfset SendEmailCFC = createObject("component","plugins/#HTMLEditFormat(rc.pc.getPackage())#/library/components/EmailServices")>
+					<cfset Info = StructNew()>
+					<cfset Info.RegistrationID = #URL.RegistrationID#>
+					<cfset Info.FormData = #StructCopy(Session.FormData.PluginInfo)#>
+					<cfset temp = #SendEmailCFC.SendEventCancellationToSingleParticipant(Variables.Info)#>
+					<cflocation url="/index.cfm?CancelEventSuccessfull=True" addtoken="false">
+				</cfcase>
+				<cfcase value="No">
+					<cflocation addtoken="true" url="?#HTMLEditFormat(rc.pc.getPackage())#action=public:usermenu.default&CancelEventAborted=True">
+				</cfcase>
+			</cfswitch>
+		</cfif>
+
+
+	</cffunction>
+
+	<cffunction name="getcertificate" returntype="any" output="false">
+		<cfargument name="rc" required="true" type="struct" default="#StructNew()#">
+
+	</cffunction>
+
+	<cffunction name="manageregistrations" returntype="any" output="false">
+		<cfargument name="rc" required="true" type="struct" default="#StructNew()#">
+
+		<cfif isDefined("FORM.formSubmit") and isDefined("FORM.CancelEventID")>
+			<cfif isNumeric(FORM.CancelEventID) EQ True>
+				<cfquery name="GetRegisteredEvents" Datasource="#rc.$.globalConfig('datasource')#" username="#rc.$.globalConfig('dbusername')#" password="#rc.$.globalConfig('dbpassword')#">
+					SELECT eRegistrations.TContent_ID, eEvents.TContent_ID, eEvents.ShortTitle, eEvents.EventDate, eRegistrations.RequestsMeal, eEvents.PGPAvailable, eEvents.PGPPoints, eRegistrations.IVCParticipant, eRegistrations.AttendeePrice, eRegistrations.WebinarParticipant
+					FROM eRegistrations INNER JOIN eEvents ON eEvents.TContent_ID = eRegistrations.EventID
+					WHERE eRegistrations.Site_ID = <cfqueryparam value="#Session.Mura.SiteID#" cfsqltype="cf_sql_varchar"> AND
+						eRegistrations.User_ID = <cfqueryparam value="#Session.Mura.UserID#" cfsqltype="cf_sql_varchar"> and
+						eEvents.TContent_ID = <cfqueryparam value="#FORM.CancelEventID#" cfsqltype="cf_sql_integer">
+					ORDER BY eRegistrations.RegistrationDate DESC
+				</cfquery>
+				<cflocation url="/plugins/EventRegistration/index.cfm?EventRegistrationaction=public:usermenu.cancelregistration&RegistrationID=#FORM.CancelEventID#">
+			</cfif>
+		<cfelseif isDefined("FORM.formSubmit") and isDefined("FORM.ViewRegistrationID")>
+			<cfif isNumeric(FORM.ViewRegistrationID) EQ True>
+				<cflocation url="/plugins/EventRegistration/index.cfm?EventRegistrationaction=public:usermenu.getregistration&formSubmit=true&RegistrationID=#FORM.ViewRegistrationID#" addtoken="false">
+			</cfif>
+		<cfelseif isDefined("FORM.formSubmit") and isDefined("FORM.CertificatelEventID")>
+			<cfif isNumeric(FORM.CertificatelEventID) EQ True>
+				<cflocation url="/plugins/EventRegistration/index.cfm?EventRegistrationaction=public:usermenu.getcertificate&formSubmit=true&CertificateEventID=#FORM.CertificatelEventID#" addtoken="false">
+			</cfif>
+		</cfif>
+
 	</cffunction>
 
 	<cffunction name="changepassword" returntype="any" output="false">
